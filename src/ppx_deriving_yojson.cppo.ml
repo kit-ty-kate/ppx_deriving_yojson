@@ -89,7 +89,7 @@ let poly_fun names expr =
       [%expr fun [%p pvar ("poly_"^name)] -> [%e expr]]
     ) names expr
 
-let type_add_attrs typ attributes = 
+let type_add_attrs typ attributes =
   { typ with ptyp_attributes = typ.ptyp_attributes @ attributes }
 
 let rec ser_expr_of_typ typ =
@@ -385,7 +385,11 @@ let ser_str_of_type ~options ~path ({ ptype_loc = loc } as type_decl) =
       let ty = Typ.poly poly_vars (polymorphize_ser [%type: [%t typ] -> Yojson.Safe.t]) in
       let default_fun =
         let type_path = String.concat "." (path @ [type_decl.ptype_name.txt]) in
+#if OCAML_VERSION < (4, 11, 0)
         let e_type_path = Exp.constant (Pconst_string (type_path, None)) in
+#else
+        let e_type_path = Exp.constant (Pconst_string (type_path, Location.none, None)) in
+#endif
         [%expr fun _ ->
           invalid_arg ("to_yojson: Maybe a [@@deriving yojson] is missing when extending the type "^
                        [%e e_type_path])]
