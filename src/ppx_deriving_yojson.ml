@@ -23,7 +23,7 @@ let disable_warning_39 () =
   Ast_helper.Attr.mk ~loc name (PStr [%str "-39"])
 
 
-let mod_mknoloc x = mknoloc x
+let mod_mknoloc x = mknoloc (Some x)
 
 let deriver = "yojson"
 let raise_errorf = Ppx_deriving.raise_errorf
